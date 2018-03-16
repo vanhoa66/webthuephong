@@ -1,0 +1,36 @@
+<% include header %>
+
+    <body>
+        <div class="container">
+            <form action="/room/<%= room.id%>?_method=PUT" method="POST">
+                <div class="form-group">
+                    <label for="formGroupExampleInput">Tên sản phẩm: </label>
+                    <input type="text" class="form-control" name="name" value="<%= room.name %>" id="formGroupExampleInput" placeholder="Tên sản phẩm">
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput2">Giá: </label>
+                    <input type="number" class="form-control" name="price" value="<%= room.price %>" id="formGroupExampleInput2" placeholder="Giá">
+                </div>
+                <div class="form-group">
+                    <img src="<%= room.image %>" alt="" class="img-thumbnail">
+                </div>
+                <!-- <div class="form-group">
+                <label for="formGroupExampleInput2">Hình ảnh: </label>
+                <input type="text" class="form-control" name="image" value="<%= room.image %>" id="formGroupExampleInput2" placeholder="Hình ảnh">
+            </div> -->
+                <div class="form-group">
+                    <label for="exampleFormControlFile1">Example file input</label>
+                    <input type="file" class="form-control-file" name="image" accept="image/*" id="exampleFormControlFile1">
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Mô tả chi tiết: </label>
+                    <textarea class="form-control" name="editor1" id="editor1" rows="10" cols="80"><%= room.description %></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            </form>
+        </div>
+        <script>
+            CKEDITOR.replace('editor1');
+        </script>
+
+        <% include footer %>

@@ -1,0 +1,32 @@
+<% include header %>
+<body>
+    <div class="container">
+<div class="product-details">
+    <!--product-details-->
+    <div class="col-sm-5">
+        <div class="view-product">
+            <img src="<%= room.image %>" alt="" />
+        </div>
+    </div>
+    <div class="col-sm-7">
+        <div class="product-information">
+            <!--/product-information-->
+            <h2>
+                <%= room.name %>
+            </h2>
+            <span>
+                <span>
+                    Giá:
+                    <%= room.price %>
+                </span>
+            </span>
+            <p> <%- room.description %></p>
+        </div>
+        <!--/product-information-->
+    </div>
+</div>
+<!--/product-details-->
+    </div>
+
+    
+    <% include footer %>
