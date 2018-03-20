@@ -2,7 +2,7 @@
 
     <body>
         <div class="container">
-            <form action="/room/<%= room.id%>?_method=PUT" method="POST">
+            <form action="/room/<%= room.id%>?_method=PUT" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="formGroupExampleInput">Tên sản phẩm: </label>
                     <input type="text" class="form-control" name="name" value="<%= room.name %>" id="formGroupExampleInput" placeholder="Tên sản phẩm">

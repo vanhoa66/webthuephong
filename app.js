@@ -64,7 +64,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const storage = multer.diskStorage({
     filename: (req, file, callback) => {
-        callback(null, Date.now() + file.originalname);
+        callback(null, file.originalname);
     }
 });
 const fileFilter = function (req, file, cb) {
@@ -113,13 +113,13 @@ const Room = db.define("room", {
     description: { type: Sequelize.STRING }
 });
 
-db.authenticate()
-    .then(() => console.log("ok"))
-    .catch(err => console.log(err));
+// db.authenticate()
+//     .then(() => console.log("ok"))
+//     .catch(err => console.log(err));
 
-Room.sync()
-    .then(() => console.log("them ok"))
-    .catch(err => console.log(err));
+// Room.sync()
+//     .then(() => console.log("them ok"))
+//     .catch(err => console.log(err));
 
 // Room.create({
 //     name: 'Ghe van phong 01',
@@ -146,25 +146,26 @@ app.get("/roomAdd", (req, res) => {
 });
 
 app.post("/roomAdd", upload.single('image'), (req, res) => {
-
-    cloudinary.uploader.upload(req.file.path)
-        .then(result => {
-            let image = result.secure_url;
-            // console.log(result.secure_url);
-            let { name, price } = req.body;
-            let slugUrl = slug(name);
-            let description = req.body.editor1;
-            let newRoom = { name, slugUrl, price, image, description };
-            console.log(newRoom);
-            Room.create(newRoom)
-                .then(() => res.redirect("/"))
-                .catch(err => res.redirect("/roomAdd"))
-        })
-        .catch(err => res.redirect("/roomAdd"))
+    if (typeof (req.file) === "undefined") {
+        res.redirect("/roomAdd")
+    } else {
+        cloudinary.uploader.upload(req.file.path)
+            .then(result => {
+                let image = result.secure_url;
+                let { name, price } = req.body;
+                let slugUrl = slug(name);
+                let description = req.body.editor1;
+                let newRoom = { name, slugUrl, price, image, description };
+                Room.create(newRoom)
+                    .then(() => res.redirect("/"))
+                    .catch(err => res.redirect("/roomAdd"))
+            })
+            .catch(err => res.redirect("/roomAdd"))
+    }
 });
 
 app.get("/room/:id/edit", (req, res) => {
-    var id = req.params.id;
+    let id = req.params.id;
     Room.findById(id)
         .then(room => res.render("roomEdit", { room }))
         .catch(e => console.error(e))
@@ -177,16 +178,28 @@ app.route("/room/:id")
             .then(room => res.render("roomDetail", { room }))
             .catch(e => console.error(e))
     })
-    .put((req, res) => {
+    .put(upload.single('image'), (req, res) => {
         let id = req.params.id;
-        let { name, price } = req.body;
-        // console.log(name);
-        let description = req.body.editor1;
-        let updateRoom = { name, price, description };
-        console.log(updateRoom);
-        Room.update(updateRoom, { where: { id: id } })
-          .then(() => res.redirect("/"))
-          .catch(err => console.log(err))
+        if (typeof (req.file) === "undefined") {
+            let { name, price } = req.body;
+            let description = req.body.editor1;
+            let updateRoom = { name, price, description };
+            Room.update(updateRoom, { where: { id: id } })
+                .then(() => res.redirect("/"))
+                .catch(err => console.log(err))
+        } else {
+            cloudinary.uploader.upload(req.file.path)
+                .then(result => {
+                    let image = result.secure_url;
+                    let { name, price } = req.body;
+                    let description = req.body.editor1;
+                    let updateRoom = { name, price, image, description };
+                    Room.update(updateRoom, { where: { id: id } })
+                        .then(() => res.redirect("/"))
+                        .catch(err => res.redirect("/"))
+                })
+                .catch(err => res.redirect("/"))
+        }
     })
     .delete((req, res) => {
         var id = req.params.id;
